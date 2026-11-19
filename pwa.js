@@ -10,37 +10,6 @@
     });
   }
 
-  /* ---------- status pill ---------- */
-  var pill;
-  function ensurePill() {
-    if (pill && pill.parentNode) return pill;
-    pill = document.createElement('div');
-    pill.id = 'nq-pill'; pill.setAttribute('role', 'status');
-    pill.innerHTML = '<i></i><span></span>';
-    document.body.appendChild(pill);
-    return pill;
-  }
-  function render(d) {
-    var enabled = d ? d.enabled : (window.NacossSync && window.NacossSync.enabled);
-    var online = navigator.onLine;
-    var st = (d && d.status) || (window.NacossSync && window.NacossSync.info().status) || '';
-    var text, cls;
-    if (!online) { text = 'Offline'; cls = 'off'; }
-    else if (!enabled) { pill && pill.parentNode && pill.parentNode.removeChild(pill); return; }
-    else if (st === 'syncing') { text = 'Syncing…'; cls = 'sync'; }
-    else if (st === 'pending') { text = 'Saving online…'; cls = 'sync'; }
-    else if (st === 'error') { text = 'Sync problem'; cls = 'err'; }
-    else { text = 'Online'; cls = 'on'; }
-    var p = ensurePill();
-    p.className = cls; p.lastChild.textContent = text;
-    if (d && d.pending && cls !== 'on') p.lastChild.textContent = text + (d.pending ? ' · ' + d.pending : '');
-    if (cls === 'err' && d && d.error) p.title = d.error;
-  }
-  window.addEventListener('nacoss-sync', function (e) { render(e.detail); });
-  window.addEventListener('online', function () { render(); });
-  window.addEventListener('offline', function () { render(); });
-  document.addEventListener('DOMContentLoaded', function () { render(); });
-
   /* ---------- install banner ---------- */
   var deferred = null, card;
   var DISMISS_KEY = 'nacoss_install_dismissed';

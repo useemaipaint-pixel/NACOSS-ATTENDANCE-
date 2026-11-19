@@ -233,6 +233,7 @@
   /* Runs before the app starts: grab the latest online data (max ~3s) so the app opens up to date. */
   function bootGate() {
     if (!ENABLED || !navigator.onLine) return Promise.resolve();
+    if (loadState().init) { setTimeout(function () { sync(); }, 1500); return Promise.resolve(); } /* already synced before: open instantly */
     return Promise.race([
       sync({ silent: true }).catch(function () {}),
       new Promise(function (r) { setTimeout(r, 3000); })
